@@ -1,26 +1,84 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
+@plugin "daisyui/theme" {
+  name: "chef-theme";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* --- 1. THE CANVAS (Warm Cream) --- */
+  /* Replaces #FFF9F3 */
+  --color-base-100: oklch(98% 0.01 60); 
+  /* Slightly darker cream for hover/layers */
+  --color-base-200: oklch(96% 0.02 60); 
+  /* Darker border/divider color */
+  --color-base-300: oklch(90% 0.03 60); 
+  /* Deep Navy Text (#0B1221) */
+  --color-base-content: oklch(15% 0.03 260); 
+
+  /* --- 2. PRIMARY (Navigation / Active Buttons) --- */
+  /* The Deep Navy (#0F172A) */
+  --color-primary: oklch(22% 0.05 265);
+  --color-primary-content: oklch(98% 0.01 265);
+
+  /* --- 3. SECONDARY (Highlights / Inactive Pills) --- */
+  /* The Biscuit/Gold (#C4A47C) */
+  --color-secondary: oklch(74% 0.09 75);
+  --color-secondary-content: oklch(100% 0 0);
+
+  /* --- 4. ACCENT (Star Ratings / Brand Pop) --- */
+  /* The Star Gold (#EAB308) */
+  --color-accent: oklch(80% 0.16 85);
+  --color-accent-content: oklch(15% 0.05 85);
+
+  /* --- 5. NEUTRAL (Muted Text) --- */
+  /* Slate Grey (#475569) */
+  --color-neutral: oklch(45% 0.05 260);
+  --color-neutral-content: oklch(98% 0.01 260);
+
+  /* --- STANDARD STATUS COLORS --- */
+  --color-info: oklch(70% 0.15 220);
+  --color-success: oklch(65% 0.2 140); 
+  --color-warning: oklch(80% 0.15 80);
+  --color-error: oklch(65% 0.2 30);
+
+  /* --- UI SETTINGS --- */
+  --radius-selector: 2rem; /* Fully rounded for pill buttons */
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;      /* Rounded cards */
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* --- CUSTOM DRINK FLAVORS --- */
+/* These don't fit into DaisyUI slots, so we add them as custom utilities 
+   that you can use like `bg-[--lemon-bg]` or `text-[--lemon-text]` */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Lemon */
+  --lemon-bg: #FEF3C7;
+  --lemon-text: #92400E;
+
+  /* Berry/Margarita */
+  --berry-bg: #FFE4E6;
+  --berry-text: #9F1239;
+
+  /* Tropical/Cocktail */
+  --tropical-bg: #CCFBF1;
+  --tropical-text: #115E59;
+
+  /* Melon/Smoothie */
+  --melon-bg: #FEE2E2;
+  --melon-text: #B91C1C;
+  
+  /* Texture Pattern */
+  --pattern-color: #E8DED5;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Texture Utility Class */
+.bg-food-pattern {
+  background-image: radial-gradient(var(--pattern-color) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  opacity: 0.6;
 }
