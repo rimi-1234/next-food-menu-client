@@ -4,20 +4,23 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+import Swal from "sweetalert2";
 export default function ManageProductsPage() {
-  const { data: session } = useSession();
+  const { data: session ,status} = useSession();
   const router = useRouter();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push("/login");
-  //   }
-  // }, [session, router]);
+  useEffect(() => {
+    if (status === "loading") return; // wait for session
+    if (!session) {
+      router.push("/login"); // redirect if not logged in
+    } else {
+      setLoading(false);
+    }
+  }, [session, status]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,7 +40,18 @@ export default function ManageProductsPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+  // 1️⃣ Ask for confirmation using SweetAlert2
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
     try {
       const res = await fetch(`http://localhost:5000/products/${id}`, {
         method: "DELETE",
@@ -45,13 +59,30 @@ export default function ManageProductsPage() {
           "x-admin-token": "admin123",
         },
       });
+
       if (!res.ok) throw new Error("Delete failed");
+
+      // Update state
       setProducts(products.filter((p) => p._id !== id));
+
+      // Success popup
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "The product has been deleted.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to delete product");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.message || "Failed to delete product",
+      });
     }
-  };
+  }
+};
 
   if (loading) return <p className="text-center mt-6">Loading products...</p>;
   if (error) return <p className="text-center mt-6 text-red-500">{error}</p>;

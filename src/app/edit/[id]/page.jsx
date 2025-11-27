@@ -1,5 +1,5 @@
 "use client";
-
+import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -52,26 +52,42 @@ export default function EditMenuProduct() {
     setProduct((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit updated product
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`http://localhost:5000/products/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(product),
-      });
-      if (res.ok) {
-        alert("Product updated successfully!");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch(`http://localhost:5000/products/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(product),
+    });
+
+    if (res.ok) {
+      Swal.fire({
+        icon: "success",
+        title: "Updated!",
+        text: "Product updated successfully!",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
         router.push("/manage-products");
-      } else {
-        alert("Failed to update, please try again.");
-      }
-    } catch (error) {
-      console.error("Error updating product:", error);
-      alert("Error updating product");
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "Failed to update, please try again.",
+      });
     }
-  };
+  } catch (error) {
+    console.error("Error updating product:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Error updating product",
+    });
+  }
+};
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 

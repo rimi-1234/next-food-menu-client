@@ -1,9 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function AddProductPage() {
+    const { data: session ,status} = useSession();
+      const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    
+      useEffect(() => {
+    // wait for session
+        if (!session) {
+          router.push("/login"); // redirect if not logged in
+        } else {
+          setLoading(false);
+        }
+      }, [session, status]);
   const [formData, setFormData] = useState({
     title: "",
     shortDescription: "",
@@ -15,33 +29,48 @@ export default function AddProductPage() {
     quantity: "",
   });
 
-  const router = useRouter();
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await fetch("http://localhost:5000/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-token": "admin123", // Must match server middleware
-        },
-        body: JSON.stringify(formData),
-      });
+  try {
+    const res = await fetch("http://localhost:5000/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-token": "admin123", // Must match server middleware
+      },
+      body: JSON.stringify(formData),
+    });
 
-      if (!res.ok) throw new Error("Failed to add product");
+    if (!res.ok) throw new Error("Failed to add product");
 
-      alert("Product added successfully!");
-      router.push("/menu"); // redirect to item list
-    } catch (error) {
-      alert(error.message);
-    }
-  };
+    Swal.fire({
+      title: "Success!",
+      text: "Product added successfully!",
+      icon: "success",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#3085d6",
+    }).then(() => {
+      router.push("/menu"); // redirect after OK click
+    });
+
+  } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: error.message,
+      icon: "error",
+      confirmButtonText: "Try Again",
+      confirmButtonColor: "#d33",
+    });
+  }
+};
+  if (status === "loading") return <p className="text-center mt-6">Loading products...</p>;
 
   return (
     <div className="max-w-lg mx-auto p-6">

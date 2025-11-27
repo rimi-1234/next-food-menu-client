@@ -1,5 +1,5 @@
 "use client";
-
+import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -19,10 +19,10 @@ export default function LoginPage() {
     }
   }, [status, router]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleLogin = async (e) => {
+  e.preventDefault();
 
+  try {
     const res = await signIn("credentials", {
       redirect: false,
       email,
@@ -30,15 +30,50 @@ export default function LoginPage() {
     });
 
     if (res?.error) {
-      setError(res.error);
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: res.error,
+      });
     } else if (res?.ok) {
-      router.push("/"); // redirect to home after successful login
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "Redirecting to homepage...",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        router.push("/"); // redirect after popup
+      });
     }
-  };
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+      text: error.message,
+    });
+  }
+};
 
-  const handleGoogleLogin = async () => {
+const handleGoogleLogin = async () => {
+  try {
     await signIn("google", { callbackUrl: "/" });
-  };
+    Swal.fire({
+      icon: "success",
+      title: "Login Successful",
+      text: "Redirecting to homepage...",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Google Login Failed",
+      text: error.message,
+    });
+  }
+};
+
 
   // Show loading while session status is "loading"
   if (status === "loading") {
