@@ -1,15 +1,12 @@
 import clientPromise from "@/lib/mongodb";
 import { hash } from "bcryptjs";
+import { NextResponse } from "next/server";
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
-  const { name, email, password } = req.body;
+export async function POST(req) {
+  const { name, email, password } = await req.json();
 
   if (!name || !email || !password) {
-    return res.status(400).json({ message: "Missing fields" });
+    return NextResponse.json({ message: "Missing fields" }, { status: 400 });
   }
 
   try {
@@ -18,7 +15,7 @@ export default async function handler(req, res) {
 
     const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
+      return NextResponse.json({ message: "User already exists" }, { status: 409 });
     }
 
     const hashedPassword = await hash(password, 10);
@@ -30,10 +27,9 @@ export default async function handler(req, res) {
       createdAt: new Date(),
     });
 
-    // ✅ Return the inserted user ID (optional)
-    return res.status(201).json({ message: "User registered successfully", userId: result.insertedId });
+    return NextResponse.json({ message: "User registered successfully", userId: result.insertedId }, { status: 201 });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

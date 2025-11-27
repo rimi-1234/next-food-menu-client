@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, EffectCoverflow, Pagination, } from "swiper/modules"; // <-- correct path
 import "swiper/css";
 import "swiper/css/navigation"
+import { useEffect, useState } from "react";
 
 const slides = [
   {
@@ -44,12 +45,68 @@ const menudetails = [
   { name: "Veggie Salad", price: "$7", desc: "Fresh greens with cherry tomatoes, cucumbers, and vinaigrette." },
 ];
 export default function Home() {
+  const [latestItems, setLatestItems] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/latest-products") // your backend endpoint
+      .then((res) => res.json())
+      .then((data) => setLatestItems(data))
+      .catch((err) => console.error(err));
+  }, []);
   return (
     <div className="bg-base-100 dark:bg-black font-sans">
 
 
       {/* Hero Slider */}
       <HeroSlider slides={slides} />
+      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Latest Items</h2>
+
+          <Swiper
+            modules={[Navigation, Autoplay, Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            navigation
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            pagination={{ clickable: true }}
+            breakpoints={{
+              640: { slidesPerView: 1 },
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+          >
+          {latestItems.map((item, idx) => (
+  <SwiperSlide key={idx}>
+    <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-300 text-center flex flex-col">
+      
+      {/* Image or placeholder */}
+      <div className="relative h-48 w-full rounded-xl overflow-hidden mb-4 shadow-sm group">
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.title}
+            className="h-full w-full object-cover rounded-xl transform transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full w-full bg-red-100 dark:bg-red-900 rounded-xl">
+            <span className="text-5xl font-bold text-red-600">{item.title.charAt(0)}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Product Details */}
+      <h3 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">{item.title}</h3>
+      <p className="text-gray-600 dark:text-gray-300 mb-1 line-clamp-2">{item.shortDescription  || "No short description."}</p>
+      <p className="text-gray-500 text-sm mb-2 line-clamp-3">{item.fullDescription || "No full description."}</p>
+      <p className="text-red-600 font-bold text-lg">{item.price || "$0"}</p>
+    </div>
+  </SwiperSlide>
+))}
+
+          </Swiper>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="py-16 bg-base-100 dark:bg-gray-900">
@@ -107,7 +164,7 @@ export default function Home() {
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-8"> Delicious Dishes Just For You</h2>
-        <Swiper
+          <Swiper
             effect={"coverflow"}
             grabCursor={true}
             centeredSlides={true}
