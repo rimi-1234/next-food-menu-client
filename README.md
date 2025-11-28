@@ -6,7 +6,7 @@ Users can browse food items, view details, register, login, and admins can manag
 ---
 🌐 Live Demo
 
-🔗 Live Website: https://next-js-client-side-r7drxmo8s-rimis-projects-f57fdcf4.vercel.app/
+🔗 Live Website: https://next-js-client-side-lime.vercel.app/
 
 
 ---
