@@ -27,5 +27,5 @@ Users can browse food items, view details, register, login, and admins can manag
 
 ### **1️⃣ Clone the repository**
 ```bash
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
+git clone https://github.com/rimi-1234/next-food-menu-client
+cd https://github.com/rimi-1234/next-food-menu-client
