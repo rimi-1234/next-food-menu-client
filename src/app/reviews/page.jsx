@@ -2,19 +2,30 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 export default function ReviewForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // send review to backend
+
+    // Send review to backend
     console.log({ name, email, rating, review });
-    setSubmitted(true);
+
+    // Show SweetAlert2 success message
+    Swal.fire({
+      icon: "success",
+      title: "Thank you!",
+      text: "Your feedback has been submitted successfully.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    // Clear form fields
     setName("");
     setEmail("");
     setRating(0);
@@ -32,17 +43,6 @@ export default function ReviewForm() {
         <h2 className="text-3xl font-bold mb-6 text-center text-[var(--color-primary)]">
           Leave a Review
         </h2>
-
-        {submitted && (
-          <motion.p
-            className="text-[var(--color-success)] mb-4 text-center font-medium"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            Thank you for your feedback!
-          </motion.p>
-        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <motion.input

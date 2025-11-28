@@ -2,9 +2,10 @@
 
 import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
-import { signIn, useSession, getSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import Link from "next/link";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -17,8 +18,7 @@ export default function LoginPage() {
     if (status === "authenticated") router.push("/");
   }, [status, router]);
 
-  const validateEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password) =>
     /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(password);
 
@@ -26,7 +26,6 @@ export default function LoginPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Inline validation
     if (name === "email") {
       setErrors((prev) => ({
         ...prev,
@@ -64,16 +63,6 @@ export default function LoginPage() {
       if (res?.error) {
         Swal.fire({ icon: "error", title: "Login Failed", text: res.error });
       } else if (res?.ok) {
-        const session = await getSession();
-        if (session?.user?.emailVerified === false) {
-          Swal.fire({
-            icon: "warning",
-            title: "Email Not Verified",
-            text: "Please verify your email before logging in.",
-          });
-          return;
-        }
-
         Swal.fire({
           icon: "success",
           title: "Login Successful",
@@ -82,7 +71,6 @@ export default function LoginPage() {
           showConfirmButton: false,
         }).then(() => router.push("/"));
 
-        // Clear form fields
         setFormData({ email: "", password: "" });
       }
     } catch (err) {
@@ -92,7 +80,18 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      await signIn("google", { callbackUrl: "/" });
+      const res = await signIn("google", { redirect: false });
+      if (res?.error) {
+        Swal.fire({ icon: "error", title: "Google Login Failed", text: res.error });
+      } else if (res?.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Google Login Successful",
+          text: "Redirecting to homepage...",
+          timer: 1500,
+          showConfirmButton: false,
+        }).then(() => router.push("/"));
+      }
     } catch (error) {
       Swal.fire({ icon: "error", title: "Google Login Failed", text: error.message });
     }
@@ -119,6 +118,7 @@ export default function LoginPage() {
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
+              autoComplete="email"
               className={`input input-bordered w-full bg-gray-100 ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
@@ -132,16 +132,15 @@ export default function LoginPage() {
               name="password"
               type="password"
               placeholder="Password"
-              defaultvalue={formData.password}
+              value={formData.password}
               onChange={handleChange}
+              autoComplete="current-password"
               className={`input input-bordered w-full bg-gray-100 ${
                 errors.password ? "border-red-500" : "border-gray-300"
               }`}
               required
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
 
           <button type="submit" className="btn btn-primary w-full">
@@ -158,9 +157,9 @@ export default function LoginPage() {
 
         <p className="text-sm text-center mt-4 text-gray-600">
           Don't have an account?{" "}
-          <a href="/register" className="font-semibold text-secondary hover:underline">
+          <Link href="/register" className="font-semibold text-secondary hover:underline">
             Register
-          </a>
+          </Link>
         </p>
       </div>
     </div>

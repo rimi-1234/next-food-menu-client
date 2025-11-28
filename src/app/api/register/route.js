@@ -10,8 +10,9 @@ export async function POST(req) {
   }
 
   try {
-    const client = await clientPromise;
-    const db = client.db();
+    // ✅ Connect to MongoDB
+    const client = await clientPromise;   // <- make sure to await the promise
+    const db = client.db("test");         // <- your database name
 
     const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
@@ -27,9 +28,13 @@ export async function POST(req) {
       createdAt: new Date(),
     });
 
-    return NextResponse.json({ message: "User registered successfully", userId: result.insertedId }, { status: 201 });
+    return NextResponse.json({
+      message: "User registered successfully",
+      userId: result.insertedId,
+    }, { status: 201 });
+
   } catch (err) {
-    console.error(err);
+    console.error("Error in /api/register POST:", err);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

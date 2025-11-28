@@ -14,7 +14,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/products/${id}`);
+        const res = await fetch(`https://nextjs-project-foodmenu-server.vercel.app/products/${id}`);
         if (!res.ok) throw new Error(`Failed to fetch product: ${res.status}`);
         const data = await res.json();
         setProduct(data);

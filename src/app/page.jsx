@@ -7,7 +7,16 @@ import { Navigation, Autoplay, EffectCoverflow, Pagination, } from "swiper/modul
 import "swiper/css";
 import "swiper/css/navigation"
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
+const menuItems = [
+  { name: "Margherita Pizza", quantity: 20, image: "https://i.ibb.co/MxLm6q1d/pizza.jpg" },
+  { name: "Cheeseburger", quantity: 15, image: "https://i.ibb.co/bRR8Pm9P/bugger.jpg" },
+  { name: "Chocolate Cake", quantity: 10, image: "https://i.ibb.co/Q7fTSdbJ/30-Summer-Desserts.jpg" },
+  { name: "Veggie Salad", quantity: 12, image: "https://i.ibb.co/C58b27YD/Salad.jpg" },
+  { name: "Pepperoni Pizza", quantity: 18, image: "https://i.ibb.co.com/6c0YTjNQ/img-6934-48664.jpg" },
+ 
+];
 const slides = [
   {
     title: "Delicious Pizzas Delivered Fast",
@@ -32,12 +41,7 @@ const slides = [
   },
 ];
 
-const menuItems = [
-  { name: "Margherita Pizza", price: "$12", image: "https://i.ibb.co/MxLm6q1d/pizza.jpg" },
-  { name: "Cheeseburger", price: "$10", image: "https://i.ibb.co/bRR8Pm9P/bugger.jpg" },
-  { name: "Chocolate Cake", price: "$8", image: "https://i.ibb.co/Q7fTSdbJ/30-Summer-Desserts.jpg" },
-  { name: "Veggie Salad", price: "$7", image: "https://i.ibb.co.com/C58b27YD/Salad.jpg" },
-];
+
 const menudetails = [
   { name: "Margherita Pizza", price: "$12", desc: "Classic Italian pizza with fresh mozzarella and basil." },
   { name: "Cheeseburger", price: "$10", desc: "Juicy beef patty with cheddar, lettuce, tomato & sauce." },
@@ -48,7 +52,7 @@ export default function Home() {
   const [latestItems, setLatestItems] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/latest-products") // your backend endpoint
+    fetch("https://nextjs-project-foodmenu-server.vercel.app/latest-products") // your backend endpoint
       .then((res) => res.json())
       .then((data) => setLatestItems(data))
       .catch((err) => console.error(err));
@@ -76,33 +80,40 @@ export default function Home() {
               1024: { slidesPerView: 3 },
             }}
           >
-          {latestItems.map((item, idx) => (
-  <SwiperSlide key={idx}>
-    <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-300 text-center flex flex-col">
-      
-      {/* Image or placeholder */}
-      <div className="relative h-48 w-full rounded-xl overflow-hidden mb-4 shadow-sm group">
-        {item.image ? (
-          <img
-            src={item.image}
-            alt={item.title}
-            className="h-full w-full object-cover rounded-xl transform transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full w-full bg-red-100 dark:bg-red-900 rounded-xl">
-            <span className="text-5xl font-bold text-red-600">{item.title.charAt(0)}</span>
-          </div>
-        )}
-      </div>
+            {latestItems.length > 0 ? (
+              latestItems.map((item, idx) => (
+                <SwiperSlide key={idx}>
+                  <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-300 text-center flex flex-col">
 
-      {/* Product Details */}
-      <h3 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">{item.title}</h3>
-      <p className="text-gray-600 dark:text-gray-300 mb-1 line-clamp-2">{item.shortDescription  || "No short description."}</p>
-      <p className="text-gray-500 text-sm mb-2 line-clamp-3">{item.fullDescription || "No full description."}</p>
-      <p className="text-red-600 font-bold text-lg">{item.price || "$0"}</p>
-    </div>
-  </SwiperSlide>
-))}
+                    {/* Image or placeholder */}
+                    <div className="relative h-48 w-full rounded-xl overflow-hidden mb-4 shadow-sm group">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="h-full w-full object-cover rounded-xl transform transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full w-full bg-red-100 dark:bg-red-900 rounded-xl">
+                          <span className="text-5xl font-bold text-red-600">{item.title.charAt(0)}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product Details */}
+                    <h3 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">{item.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-1 line-clamp-2">{item.shortDescription || "No short description."}</p>
+                    <p className="text-gray-500 text-sm mb-2 line-clamp-3">{item.fullDescription || "No full description."}</p>
+                    <p className="text-red-600 font-bold text-lg">${item.price || "$0"}</p>
+                  </div>
+                </SwiperSlide>
+              ))
+            ) : (
+              <div className="w-full text-center py-10 text-gray-500 dark:text-gray-300">
+                No latest items available.
+              </div>
+            )}
+
 
           </Swiper>
         </div>
@@ -135,32 +146,29 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-12">Our Menu</h2>
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            spaceBetween={20}
-            slidesPerView={1}
-            navigation
-            autoplay={{ delay: 3000 }}
-            breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-          >
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {menuItems.map((item, idx) => (
-              <SwiperSlide key={idx}>
-                <div className="bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300">
-                  <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
-                  <div className="p-4 text-center">
-                    <h3 className="font-semibold text-lg mb-2">{item.name}</h3>
-                    <p className="text-red-600 font-bold">{item.price}</p>
-                  </div>
+              <div
+                key={idx}
+                className="bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300"
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4 text-center">
+                  <h3 className="font-semibold text-lg mb-2">{item.name}</h3>
+                  <p className="text-gray-700 dark:text-gray-200 font-medium">
+                    Quantity: {item.quantity}
+                  </p>
                 </div>
-              </SwiperSlide>
+              </div>
             ))}
-          </Swiper>
+          </div>
         </div>
       </section>
+
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-8"> Delicious Dishes Just For You</h2>

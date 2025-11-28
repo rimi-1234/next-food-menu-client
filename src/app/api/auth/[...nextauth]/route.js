@@ -6,14 +6,12 @@ import { compare } from "bcryptjs";
 
 export const authOptions = {
   providers: [
-    // ⭐ GOOGLE LOGIN
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
     }),
 
-    // ⭐ CREDENTIALS LOGIN
-   CredentialsProvider({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
@@ -22,8 +20,8 @@ export const authOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) return null;
 
-        const client = await clientPromise;
-        const db = client.db();
+        const client = await clientPromise; // ✅ connected client
+        const db = client.db(); // ✅ get database
 
         const user = await db.collection("users").findOne({ email: credentials.email });
         if (!user) return null;
@@ -31,12 +29,11 @@ export const authOptions = {
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) return null;
 
-        return { id: user._id, name: user.name, email: user.email };
+        return { id: user._id.toString(), name: user.name, email: user.email };
       },
     }),
   ],
 
-  // ⚙️ Save Google user to MongoDB
   callbacks: {
     async signIn({ user, account }) {
       if (account.provider === "google") {
@@ -44,12 +41,11 @@ export const authOptions = {
         const db = client.db();
 
         const existingUser = await db.collection("users").findOne({ email: user.email });
-
         if (!existingUser) {
           await db.collection("users").insertOne({
             name: user.name,
             email: user.email,
-            password: null, // Google user has no password
+            password: null, // Google users have no password
           });
         }
       }

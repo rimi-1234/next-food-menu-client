@@ -24,7 +24,7 @@ export default function EditMenuProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/products/${id}`);
+        const res = await fetch(`https://nextjs-project-foodmenu-server.vercel.app/products/${id}`);
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
 
@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const res = await fetch(`http://localhost:5000/products/${id}`, {
+    const res = await fetch(`https://nextjs-project-foodmenu-server.vercel.app/products/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(product),

@@ -3,7 +3,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -20,7 +20,6 @@ export default function Navbar() {
 
   const isActive = (path) => pathname === path;
 
-  // Define navLinks here
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Menu", path: "/menu" },
@@ -54,24 +53,10 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
-          {!session && (
-            <>
-              <li>
-                <Link href="/login" className="btn btn-secondary px-6 rounded-full">
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="btn btn-secondary px-6 rounded-full">
-                  Register
-                </Link>
-              </li>
-            </>
-          )}
         </ul>
       </div>
 
-      {/* Right side: User / Dropdown */}
+      {/* Desktop Session / User Buttons */}
       <div className="navbar-end hidden lg:flex items-center gap-2">
         {isLoading ? (
           <div className="animate-pulse flex gap-2">
@@ -99,10 +84,9 @@ export default function Navbar() {
             {dropdownOpen && (
               <ul className="absolute right-0 mt-2 w-48 bg-base-100 text-base-content rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                 <li className="px-4 py-2 text-gray-700 font-medium cursor-default">
-                  {session.user?.email || "User Email"}
+                  {session.user?.email}
                 </li>
                 <li>
-                  
                   <Link
                     href="/menu/add"
                     className="block px-4 py-2 hover:bg-[var(--color-base-200)] transition-colors"
@@ -129,7 +113,16 @@ export default function Navbar() {
               </ul>
             )}
           </div>
-        ) : null}
+        ) : (
+          <>
+            <Link href="/login" className="btn btn-secondary px-6 rounded-full">
+              Login
+            </Link>
+            <Link href="/register" className="btn btn-secondary px-6 rounded-full">
+              Register
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Mobile Menu */}
@@ -163,7 +156,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {session && (
+          {session ? (
             <>
               <Link
                 href="/menu/add"
@@ -184,9 +177,7 @@ export default function Navbar() {
                 Logout
               </button>
             </>
-          )}
-
-          {!session && (
+          ) : (
             <>
               <Link href="/login" className="btn btn-secondary w-full mt-2">
                 Login
