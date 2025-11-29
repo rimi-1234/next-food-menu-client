@@ -1,4 +1,4 @@
-# 🍽️ Next.js Food Menu Project
+# 🍽️Food Menu 
 
 A full-stack food menu application built with **Next.js 16**, **MongoDB**, and **NextAuth** for authentication.  
 Users can browse food items, view details, register, login, and admins can manage products from a secure backend.
