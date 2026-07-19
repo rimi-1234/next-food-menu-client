@@ -257,19 +257,6 @@ vercel
 
 Or connect the GitHub repository directly from the Vercel dashboard.
 
----
-
-# 📸 Screenshots
-
-Replace the placeholder below with your own screenshots.
-
-```md
-![Home](./public/home.png)
-
-![Dashboard](./public/dashboard.png)
-
-![Food Details](./public/details.png)
-```
 
 ---
 
