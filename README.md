@@ -5,11 +5,8 @@ Food Menu is a modern, fast, and fully responsive full-stack application built w
 🌐 **Live Demo:** https://next-js-client-side-lime.vercel.app/
 
 ---
-
-# 📸 Preview
-
-![Food Menu Screenshot](https://via.placeholder.com/1200x650.png?text=Food+Menu+Project)
-
+## 📸 Preview
+![Food Menu Banner or Screenshot](./src/623680903-89f5de99-70e1-4d70-b530-0d06156dda7b.png)
 ---
 
 # ✨ Features
