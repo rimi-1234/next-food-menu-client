@@ -63,7 +63,6 @@ cd https://github.com/rimi-1234/next-food-menu-client
 ---
 
 ### For Food Menu (Next.js 16 Stack)
-```markdown
 ## 🛠️ Local Installation & Setup Guide
 
 Follow these steps to set up the project locally on your machine:
